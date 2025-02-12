@@ -1,0 +1,2 @@
+/product/orderpage.do=mvc.command.OrderPageHandler
+/product/order_result.do=mvc.command.OrderHandler
