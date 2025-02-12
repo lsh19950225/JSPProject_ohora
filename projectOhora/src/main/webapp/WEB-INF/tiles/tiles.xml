@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC 
+   "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" 
+   "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+   
+<tiles-definitions>
+    <definition name="*.*" template="/WEB-INF/views/inc/layout.jsp">
+        <put-attribute name="header" value="/WEB-INF/views/inc/header.jsp" />
+        <put-attribute name="footer" value="/WEB-INF/views/inc/footer.jsp" />
+        <put-attribute name="content" value="/WEB-INF/views/{1}/{2}.jsp" />
+        <put-attribute name="headerCss" value="/resources/css/header.css" />
+        <put-attribute name="css" value="/resources/css/{1}/{2}.css"/>
+        <put-attribute name="title" value="오호라~~"/>
+    </definition>
+    
+    <definition name="reviewList.oho_review" template="/WEB-INF/views/inc/rvlayout.jsp">
+        <put-attribute name="content" value="/WEB-INF/views/reviewList/oho_review.jsp" />
+        <put-attribute name="css" value="/resources/css/reviewList/oho_review.css"/>
+        <put-attribute name="title" value="오호라 리뷰"/>
+    </definition>
+    
+     <definition name="reviewWrite.oho_reviewWrite" template="/WEB-INF/views/inc/rvlayout.jsp">
+        <put-attribute name="content" value="/WEB-INF/views/reviewWrite/oho_reviewWrite.jsp" />
+        <put-attribute name="css" value="/resources/css/reviewWrite/oho_reviewWrite.css"/>
+        <put-attribute name="title" value="오호라 리뷰"/>
+    </definition>
+    
+    
+    <!-- 아이디 찾기 -->
+	<definition name="user.oho_findId1" template="/WEB-INF/views/inc/idlayout.jsp">
+        <put-attribute name="content" value="/WEB-INF/views/user/oho_findId1.jsp" />
+        <put-attribute name="css" value="/resources/css/findId/oho_findId1.css"/>
+        <put-attribute name="title" value="오호라 아이디 찾기"/>
+    </definition>
+    
+    <definition name="user.oho_findId2" template="/WEB-INF/views/inc/idlayout.jsp">
+        <put-attribute name="content" value="/WEB-INF/views/user/oho_findId2.jsp" />
+        <put-attribute name="css" value="/resources/css/findId/oho_findId2.css"/>
+        <put-attribute name="title" value="오호라 아이디 찾기 완료"/>
+    </definition>
+    
+	 <!-- 비밀번호 찾기 -->
+	 <definition name="user.oho_findPwd1" template="/WEB-INF/views/inc/idlayout.jsp">
+        <put-attribute name="content" value="/WEB-INF/views/user/oho_findPwd1.jsp" />
+        <put-attribute name="css" value="/resources/css/findPwd/oho_findPwd1.css"/>
+        <put-attribute name="title" value="오호라 비밀번호 찾기"/>
+    </definition>
+    
+    <definition name="user.oho_findPwd2" template="/WEB-INF/views/inc/idlayout.jsp">
+        <put-attribute name="content" value="/WEB-INF/views/user/oho_findPwd2.jsp" />
+        <put-attribute name="css" value="/resources/css/findPwd/oho_findPwd2.css"/>
+        <put-attribute name="title" value="오호라 본인확인"/>
+    </definition>
+    
+    <definition name="user.oho_findPwd3" template="/WEB-INF/views/inc/idlayout.jsp">
+        <put-attribute name="content" value="/WEB-INF/views/user/oho_findPwd3.jsp" />
+        <put-attribute name="css" value="/resources/css/findPwd/oho_findPwd3.css"/>
+        <put-attribute name="title" value="오호라 비밀번호 변경 완료"/>
+    </definition>
+	 
+    
+</tiles-definitions>

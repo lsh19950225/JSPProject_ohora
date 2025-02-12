@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="kr.ohora.www.persistence.OrderMapper"><!-- 패키지들이랑 interface 이름 -->
+
+ <!-- 주문 INSERT -->
+ <!--String insertOrder(OrderDTO order);//주문에 insert-->
+    
+ 
+ 
+   <insert id="insertOrder" parameterType="kr.ohora.www.domain.order.OrderDTO">
+    <selectKey order="BEFORE" resultType="Long" keyProperty="ordPk">
+     SELECT O_ORDER_SEQ.NEXTVAL
+     FROM dual
+   </selectKey>
+    INSERT INTO O_ORDER (
+        ord_pk,
+        ord_id,
+        user_id,
+        icpn_id,
+        ord_name,
+        ord_address,
+        ord_zipcode,
+        ord_tel,
+        ord_email,
+        ord_orderdate,
+        ord_pay_option,
+        ord_total_amount,
+        ord_cpn_discount,
+        ord_pdt_discount,
+        ord_usepoint,
+        ord_delivery_fee) 
+            VALUES(#{ordPk}, TO_CHAR(SYSDATE, 'YYYYMMDD') || '-' || LPAD(#{ordPk}, 7, '0') 
+            , #{userId}, #{icpnId}, #{rname}, #{address}, #{rzipcode1}, 
+        #{phone}, #{email1}, sysdate, #{addrPaymethod}, 
+        #{totalSum}, #{discountSum}, #{icpnDc}, #{inputPoint}, #{deliveryFee})
+    </insert>
+ 
+     <!-- 포인트 확인 -->
+     <!-- int checkPoint(@Param("userId") int userId);//유저 포인트 몇이여 -->
+     <select id="checkPoint" parameterType="int" resultType="int">
+         SELECT user_point FROM o_user WHERE user_id = #{userId}
+     </select>
+
+     <!-- 포인트 업데이트 -->
+     <!-- int updateUsePoint(@Param("userId") int userId, @Param("updatedPoint") int updatedPoint);//포인트 업뎃 -->
+     <update id="updateUsePoint">
+         UPDATE o_user SET user_point = #{updatedPoint} WHERE user_id = #{userId}
+     </update>
+
+<insert id="insertOrderDetail">
+    INSERT INTO o_orddetail (
+        opdt_id,
+        ord_pk,
+        opdt_name,
+        opdt_amount,
+        opdt_dcamount,
+        opdt_count,
+        opdt_state,
+        opdt_confirm
+    ) VALUES (
+        o_orddetail_seq.NEXTVAL,
+        #{ordPk},
+        #{pdtName},
+        #{pdtAmount},
+        #{pdtDiscountAmount},
+        #{pdtCount},
+        '배송완료',
+        'N'
+    )
+</insert>
+
+     <!-- 장바구니 삭제 -->
+     <delete id="deleteCart">
+         DELETE FROM o_cartlist WHERE user_id = #{userId} AND pdt_id = #{pdtId}
+     </delete>
+
+     <!-- 쿠폰 삭제 -->
+     <delete id="deleteCoupon">
+         DELETE FROM o_coupon WHERE cpn_id = #{icpnId}
+     </delete>
+    
+    <!-- 주문 조회 있으면 이거로  -->
+    <select id="selectOrderById" parameterType="String" resultType="kr.ohora.www.domain.order.OrderDTO">
+       SELECT 
+           ord_id AS orderId,
+           user_id AS userId,
+           icpn_id AS icpnId,
+           ord_name AS rname,
+           ord_address,
+           ord_zipcode AS rzipcode1,
+           ord_tel AS phone,
+           ord_email AS email1,
+           ord_pay_option AS addrPaymethod,
+           ord_total_amount AS totalSum,
+           ord_cpn_discount AS discountSum,
+           ord_pdt_discount AS icpnDc,
+           ord_usepoint AS inputPoint,
+           ord_delivery_fee AS deliveryFee
+       FROM 
+           o_order
+       WHERE 
+           order_id = #{orderId}
+</select>
+   
+   
+   <select id="selectUserInfo" resultType="kr.ohora.www.domain.UserDTO">
+      SELECT 
+       USER_ID as userId,
+       MEM_ID as memId,
+       AUTH_ID as authId,
+       USER_LOGIN_ID as userLoginId,
+       USER_PASSWORD as userPassword,
+       USER_NAME as userName,
+       USER_EMAIL as userEmail,
+       USER_TEL as userTel,
+       USER_BIRTH as userBirth,
+       USER_POINT as userPoint,
+       USER_SMSAGREE as userSmsAgree,
+       USER_JOINDATE as userJoindate
+      FROM o_user 
+       WHERE user_id = #{userId}
+    </select>
+    
+    <select id="selectAddrList" resultType="kr.ohora.www.domain.AddrDTO">
+        SELECT 
+           ADDR_ID as addrId,
+           USER_ID as userId,
+           ADDR_NICK as addrNick,
+           ADDR_NAME as addrName,
+           ADDR_HTEL as addrHtel,
+           ADDR_TEL as addrTel,
+           ADDR_ADDRESS_MAIN as addrAddressMain,
+           ADDR_ADDRESS_DETAIL as addrAddressDetail,
+           ADDR_ZIPCODE as addrZipcode,
+           ADDR_MAIN as addrMain
+        FROM o_address
+        WHERE user_id = #{userId}
+    </select>
+    
+    <select id="selectProductList" resultType="kr.ohora.www.domain.product.ProductDTO">
+        SELECT  
+           PDT_ID as pdtId,
+           PDT_NAME as pdtName,
+            PDT_AMOUNT as pdtAmount,
+             (CASE 
+                WHEN pdt_discount_rate != 0 
+                THEN pdt_amount - (pdt_amount * (pdt_discount_rate / 100.0)) 
+                ELSE pdt_amount 
+            END) AS pdtDiscountAmount,
+            PDT_DISCOUNT_RATE as pdtDiscountRate,
+            PDT_IMG_URL as pdtImgUrl FROM o_product 
+        WHERE pdt_id IN 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+   
+</mapper>
