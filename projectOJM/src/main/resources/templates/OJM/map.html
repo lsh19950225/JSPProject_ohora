@@ -1,0 +1,119 @@
+<html xmlns:th="http://www.thymeleaf.org" layout:decorate="~{/OJM/header}">
+<div layout:fragment="content">
+    <div class="container">
+        <div class="left">
+            <div class="map">
+                <div class="place-autocomplete-card" id="place-autocomplete-card">
+                    <p>오점뭐 식당 검색</p>
+                    <input id="place-autocomplete-input" type="text" placeholder="검색어를 입력하세요" />
+                </div>
+                <div id="map" style="height: 500px; width: 100%;"></div>
+            </div>
+        </div>
+
+        <div class="right" style="background-color: aquamarine">
+            <div class="rv-board-wrap">
+                <div class="prd-review-content">
+                    <div class="prd-review-container"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let map;
+        let marker;
+        let infoWindow;
+        let autocomplete;
+        
+        const placeAutocomplete = new google.maps.places.PlaceAutocompleteElement();
+        
+        async function initMap() {
+            // Initialize the map
+            map = new google.maps.Map(document.getElementById("map"), {
+                center: { lat: 40.749933, lng: -73.98633 },
+                zoom: 13,
+                mapId: "4504f8b37365c3d0",
+                mapTypeControl: false,
+            });
+
+            // Attach the autocomplete feature to the input
+            const input = document.getElementById("place-autocomplete-input");
+            autocomplete = new google.maps.places.Autocomplete(input);
+            autocomplete.bindTo("bounds", map);
+
+            // Create the marker and infowindow
+            marker = new google.maps.Marker({
+                map,
+            });
+            infoWindow = new google.maps.InfoWindow();
+
+            
+            
+            // Add a listener for the autocomplete selection
+            autocomplete.addListener("place_changed", () => {
+                const place = autocomplete.getPlace();
+                if (!place.geometry || !place.geometry.location) {
+                    console.error("No details available for input: '" + place.name + "'");
+                    return;
+                }
+
+                // Center the map on the selected place
+                if (place.geometry.viewport) {
+                    map.fitBounds(place.geometry.viewport);
+                } else {
+                    map.setCenter(place.geometry.location);
+                    map.setZoom(17);
+                }
+
+                // Update marker and info window
+                marker.setPosition(place.geometry.location);
+                marker.setVisible(true);
+
+                const content =
+                    '<div id="infowindow-content">' +
+                    '<span id="place-displayname" class="title">' +
+                    place.name +
+                    "</span><br />" +
+                    '<span id="place-address">' +
+                    (place.formatted_address || "No address available") +
+                    "</span>" +
+                    "</div>" +
+                    "<br>" +
+                    '<a href="#">리뷰쓰기</a>';
+
+                updateInfoWindow(content, place.geometry.location);
+                
+                
+                place.toJSON = function () {
+                    return {
+                        name: this.name,
+                        address: this.formatted_address,
+                        location: this.geometry.location ? this.geometry.location.toJSON() : null,
+                        viewport: this.geometry.viewport ? this.geometry.viewport.toJSON() : null,
+                    };
+                };
+                
+                
+                
+                console.log(place);
+                console.log(place.toJSON())
+            });
+            
+        }
+
+        // Helper function to update the info window
+        function updateInfoWindow(content, center) {
+            infoWindow.setContent(content);
+            infoWindow.setPosition(center);
+            infoWindow.open(map, marker);
+        }
+    </script>
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=key&libraries=places&callback=initMap"
+        async
+        defer
+    ></script>
+  
+</div>
+</html>

@@ -1,0 +1,41 @@
+<html xmlns:th="http://www.thymeleaf.org" layout:decorate="~{/OJM/layout}">
+<div layout:fragment="content">
+
+<div class="container mt-5">
+    <!-- 회원 리뷰 테이블 -->
+    <table class="table table-striped table-bordered table-hover mx-auto">
+        <thead class="thead-dark">
+            <tr>
+                <th class="text-center">레스토랑 이름</th>
+                <th class="text-center">내용</th>
+                <th class="text-center">별점</th>
+                <th class="text-center">작성자</th>
+                <th class="text-center"></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="list : ${userReview}">
+                <td class="text-center" th:text="${list.restaurent.rname}"></td>
+                <td class="text-center" th:text="${list.content}"></td>
+                <td class="text-center" th:text="|★${list.rating}|"></td>
+                <td class="text-center" th:text="${list.userName}"></td>
+                <td class="text-center">
+                    <a id="deleteBtn"                                                 
+					   th:href="@{/rank/deleteBtn(reviewId=${list.reviewId}, restaurentReviews=${#lists.size(list.restaurent.reviewList)}, restaurentId=${list.restaurent.restaurentId})}"
+                       class="btn btn-danger btn-sm" 
+                       onclick="return confirm('정말 삭제하시겠습니까?');">
+                        삭제
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Bootstrap JS, Popper.js, and jQuery -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</div>
+</html>
